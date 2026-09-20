@@ -4,6 +4,13 @@ project(VoidEngine)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Build MSVC releases with the CRT linked into VoidEngine.exe.
+# This avoids requiring VCRUNTIME140.dll, VCRUNTIME140_1.dll and MSVCP140.dll
+# on a clean Windows installation.
+if (MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 include(FetchContent)
 
 FetchContent_Declare(
