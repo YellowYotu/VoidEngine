@@ -1312,8 +1312,58 @@ bool setClipboardText(const std::string& value) {
 }
 
 
+fs::path bundledToolchainRoot() {
+#ifdef _WIN32
+    return fs::path(currentExecutablePath()).parent_path() / "toolchain";
+#else
+    return {};
+#endif
+}
+
+void configureBundledToolchainEnvironment() {
+#ifdef _WIN32
+    const fs::path root = bundledToolchainRoot();
+    const fs::path cmakeBin = root / "cmake" / "bin";
+    const fs::path llvmBin = root / "llvm" / "bin";
+    const fs::path ninjaExe = root / "ninja" / "ninja.exe";
+    const fs::path cCompiler = llvmBin / "x86_64-w64-mingw32-clang.exe";
+    const fs::path cxxCompiler = llvmBin / "x86_64-w64-mingw32-clang++.exe";
+
+    if (!fs::exists(cmakeBin / "cmake.exe") || !fs::exists(ninjaExe) ||
+        !fs::exists(cCompiler) || !fs::exists(cxxCompiler)) {
+        return;
+    }
+
+    std::wstring oldPath;
+    DWORD required = GetEnvironmentVariableW(L"PATH", nullptr, 0);
+    if (required > 0) {
+        oldPath.resize(required);
+        GetEnvironmentVariableW(L"PATH", oldPath.data(), required);
+        if (!oldPath.empty() && oldPath.back() == L'\0') {
+            oldPath.pop_back();
+        }
+    }
+
+    const std::wstring newPath =
+        cmakeBin.wstring() + L";" +
+        (root / "ninja").wstring() + L";" +
+        llvmBin.wstring() + L";" + oldPath;
+
+    SetEnvironmentVariableW(L"PATH", newPath.c_str());
+    SetEnvironmentVariableW(L"CMAKE_GENERATOR", L"Ninja");
+    SetEnvironmentVariableW(L"CMAKE_MAKE_PROGRAM", ninjaExe.wstring().c_str());
+    SetEnvironmentVariableW(L"CC", cCompiler.wstring().c_str());
+    SetEnvironmentVariableW(L"CXX", cxxCompiler.wstring().c_str());
+#endif
+}
+
 std::string findCMakeExecutable() {
 #ifdef _WIN32
+    const fs::path bundledCMake = bundledToolchainRoot() / "cmake" / "bin" / "cmake.exe";
+    if (fs::exists(bundledCMake)) {
+        return pathToUtf8(bundledCMake);
+    }
+
     wchar_t buffer[MAX_PATH] {};
 
     if (SearchPathW(nullptr, L"cmake.exe", nullptr, MAX_PATH, buffer, nullptr) > 0) {
@@ -2273,6 +2323,7 @@ int main() {
     try {
 #ifdef _WIN32
         registerVoidEditorFileIntegration();
+        configureBundledToolchainEnvironment();
         const std::string startupFile = startupFileArgument();
 #endif
         webview::webview window(false, nullptr);
