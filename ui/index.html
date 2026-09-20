@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void Engine</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-10Z" fill="currentColor" opacity=".22"/><path d="M3 9h18M5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v8A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-10A2.5 2.5 0 0 1 5.5 4Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z" fill="currentColor" opacity=".16"/><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m9 6-6 6 6 6M15 6l6 6-6 6M14 3l-4 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="8" cy="9" r="1.7" fill="currentColor"/><path d="m5 18 5-5 3 3 2-2 4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 1 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M20 3v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5L8 5.5Z" fill="currentColor"/></symbol>
+    <symbol id="i-build" viewBox="0 0 24 24"><path d="m14 4 6 6-3 3-6-6 3-3ZM11.5 9.5 5 16l3 3 6.5-6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="m4 18 2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m7 9 3 3-3 3M12 16h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-output" viewBox="0 0 24 24"><path d="M5 5h14v14H5V5Zm3 4h8M8 12h8M8 15h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 .5 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M20 3v5h-5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-new-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 11v6M9 14h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-new-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9H3V7Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10v5M9.5 12.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+
+    <symbol id="i-file-cpp" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.4" font-weight="800" font-family="Consolas, monospace" fill="currentColor">C++</text></symbol>
+    <symbol id="i-file-h" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="8" font-weight="800" font-family="Consolas, monospace" fill="currentColor">H</text></symbol>
+    <symbol id="i-file-js" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.6" font-weight="800" font-family="Consolas, monospace" fill="currentColor">JS</text></symbol>
+    <symbol id="i-file-html" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m10 11-2 2 2 2m4-4 2 2-2 2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-file-css" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.1" font-weight="800" font-family="Consolas, monospace" fill="currentColor">CSS</text></symbol>
+    <symbol id="i-file-json" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 10c-1 0-1.5.7-1.5 1.5V12c0 .6-.3 1-1 1 .7 0 1 .4 1 1v.5c0 .8.5 1.5 1.5 1.5M14 10c1 0 1.5.7 1.5 1.5V12c0 .6.3 1 1 1-.7 0-1 .4-1 1v.5c0 .8-.5 1.5-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-file-lua" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="15.4" cy="9.5" r="1" fill="currentColor"/></symbol>
+    <symbol id="i-file-py" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.4" font-weight="800" font-family="Consolas, monospace" fill="currentColor">PY</text></symbol>
+    <symbol id="i-file-void" viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Z" fill="currentColor" opacity=".14"/><path d="M12 3 20 7.5v9L12 21l-8-4.5v-9L12 3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m8.4 8.5 3.6 7 3.6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-file-cmake" viewBox="0 0 24 24"><path d="m12 3 8 16H4L12 3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 3v16M4 19l8-8 8 8" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linejoin="round"/><path d="m12 11 4-4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></symbol>
+
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2" fill="currentColor"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 10.2v5.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="7.2" r="1.1" fill="currentColor"/></symbol>
+    <symbol id="i-run-restart" viewBox="0 0 24 24"><path d="M19 8a7 7 0 1 0 .5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M19 4v4.5h-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 8.2v7.4l6.2-3.7-6.2-3.7Z" fill="currentColor"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 11h6M9 14h6M9 17h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-file-config" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="14" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 10.5v1M12 16.5v1M8.9 12.4l.8.4M14.3 15.2l.8.4M8.9 15.6l.8-.4M14.3 12.8l.8-.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-file-markdown" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.2" font-weight="800" font-family="Consolas, monospace" fill="currentColor">MD</text></symbol>
+    <symbol id="i-file-ps" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16" text-anchor="middle" font-size="7.1" font-weight="800" font-family="Consolas, monospace" fill="currentColor">PS</text></symbol>
+    <symbol id="i-file-shader" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 15c1-3 5-3 6-6 1 3-2 5-1 7-1-.7-2-.8-3-.8-.8 0-1.5.3-2 .8Z" fill="currentColor" opacity=".92"/></symbol>
+
+
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 21h6M12 18v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="18" cy="7" r="2.5" fill="currentColor"/></symbol>
+    <symbol id="i-debug" viewBox="0 0 24 24"><path d="M8 8h8v8a4 4 0 0 1-8 0V8Z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 5l-2-2M15 5l2-2M5 10H2M22 10h-3M5 15H2M22 15h-3M12 5v12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-explorer" viewBox="0 0 24 24"><path d="M4 5h7l2 2h7v12H4V5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 9h16" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="app-shell">
+    <header class="top-bar">
+        <div class="brand-area">
+            <img class="brand-logo" src="assets/void-engine.svg" alt="Void Engine">
+            <div class="brand-name"><strong>VOID</strong><span>ENGINE</span></div>
+        </div>
+
+        <nav class="menu-bar">
+            <div class="menu"><button id="fileMenuButton" class="menu-button" data-i18n="file">File</button><div id="fileMenu" class="dropdown-menu hidden">
+                <button id="fileNewProject"><span data-i18n="newProject">New Project</span><span class="shortcut">Ctrl+N</span></button>
+                <button id="fileOpenProject"><span data-i18n="openProject">Open Project</span><span class="shortcut">Ctrl+Shift+O</span></button>
+                <button id="fileOpenFile"><span data-i18n="openFile">Open File</span><span class="shortcut">Ctrl+O</span></button>
+                <button id="fileSave"><span data-i18n="save">Save</span><span class="shortcut">Ctrl+S</span></button>
+                <div class="menu-separator"></div>
+                <button id="settingsButton"><span data-i18n="settings">Settings</span></button>
+                <div class="menu-separator"></div>
+                <button id="exitButton"><span data-i18n="exit">Exit</span></button>
+            </div></div>
+            <div class="menu"><button id="editMenuButton" class="menu-button hidden" data-i18n="edit">Edit</button><div id="editMenu" class="dropdown-menu hidden">
+                <button data-editor-command="undo"><span>Undo</span><span class="shortcut">Ctrl+Z</span></button>
+                <button data-editor-command="redo"><span>Redo</span><span class="shortcut">Ctrl+Y</span></button>
+                <div class="menu-separator"></div>
+                <button data-editor-command="cut"><span>Cut</span><span class="shortcut">Ctrl+X</span></button>
+                <button data-editor-command="copy"><span>Copy</span><span class="shortcut">Ctrl+C</span></button>
+                <button data-editor-command="paste"><span>Paste</span><span class="shortcut">Ctrl+V</span></button>
+                <div class="menu-separator"></div>
+                <button data-editor-command="selectAll"><span>Select All</span><span class="shortcut">Ctrl+A</span></button>
+            </div></div>
+            <div class="menu"><button id="helpMenuButton" class="menu-button" data-i18n="help">Help</button><div id="helpMenu" class="dropdown-menu compact-menu hidden">
+                <button data-help-page="about">About Void Engine</button>
+                <button data-help-page="commands">Commands</button>
+                <button data-help-page="languages">Languages</button>
+                <button data-help-page="colors">Explorer Colors</button>
+                <button data-help-page="structure">Project Structure</button>
+            </div></div>
+        </nav>
+
+        <div class="top-spacer"></div>
+    </header>
+
+    <section id="projectManagerView" class="project-manager-view">
+        <aside class="manager-sidebar">
+            <div>
+                <div class="side-caption" data-i18n="projects">Projects</div>
+                <button id="allProjectsButton" class="side-button active"><span class="side-dot"></span><span data-i18n="allProjects">All Projects</span></button>
+                <button id="recentProjectsButton" class="side-button"><span class="side-dot recent"></span><span data-i18n="recent">Recent</span></button>
+                <div class="side-separator"></div>
+                <div class="side-caption" data-i18n="editor">Editor</div>
+                <button id="sidebarOpenFileButton" class="side-button"><svg><use href="#i-code"></use></svg><span data-i18n="openFile">Open File</span></button>
+            </div>
+            <button id="newProjectButton" class="big-new-project"><svg><use href="#i-plus"></use></svg><span data-i18n="newProject">New Project</span></button>
+        </aside>
+        <main class="manager-content">
+            <div class="manager-inner">
+                <div class="manager-heading"><div><h1 id="pageTitle">Projects</h1><p id="pageDescription">Create, open and manage your Void Engine projects.</p></div><button id="managerOpenProjectButton" class="ghost-action"><span data-i18n="openProject">Open Project</span></button></div>
+                <div id="projectList" class="project-grid hidden"></div>
+                <div id="emptyState" class="empty-state"><img src="assets/void-engine.svg" alt=""><h2 id="emptyTitle">No projects yet</h2><p id="emptyDescription">Create your first project to start building with Void Engine.</p><div class="empty-actions"><button id="emptyNewProjectButton" class="primary-button">New Project</button><button id="emptyOpenProjectButton" class="secondary-button">Open Project</button></div></div>
+            </div>
+        </main>
+    </section>
+
+    <section id="lightEditorView" class="light-editor-view hidden">
+        <div class="light-header"><button id="lightCloseButton" class="icon-button"><svg><use href="#i-chevron"></use></svg></button><div id="lightFileIcon" class="standalone-file-icon">TXT</div><div class="light-meta"><div><strong id="lightFileName">File</strong><span id="lightModifiedDot" class="modified-dot hidden"></span><span id="lightLanguageBadge" class="language-badge">TEXT</span></div><span id="lightFilePath"></span></div><div class="top-spacer"></div><span id="lightSaveStatus" class="save-status">Saved</span><button id="lightSaveButton" class="secondary-button">Save</button></div>
+        <div id="lightTextArea" class="light-body"><div class="document-tabs"><div class="document-tab active"><span id="lightTabFileName">File</span></div></div><div class="code-region"><div id="lightLineNumbers" class="line-numbers">1</div><div class="code-stack"><pre id="lightSyntaxLayer" class="syntax-layer"></pre><textarea id="lightTextEditor" class="code-editor" spellcheck="false"></textarea></div></div><footer class="editor-status"><div><span>UTF-8</span><span>LF</span><span>Tab Size: 4</span></div><div><span id="lightLanguageStatus">Plain Text</span><span id="lightCursorStatus">Ln 1, Col 1</span></div></footer></div>
+        <div id="lightImageArea" class="image-view hidden"><div class="image-stage"><img id="lightImagePreview" alt=""></div><aside class="image-info"><h3 id="lightImageTitle">Image</h3><div><span>Format</span><strong id="lightImageFormat"></strong></div><div><span>Resolution</span><strong id="lightImageResolution"></strong></div><div><span>Size</span><strong id="lightImageSize"></strong></div><div><span>Path</span><strong id="lightImagePath"></strong></div></aside></div>
+    </section>
+
+    <section id="projectEditorView" class="project-editor-view hidden">
+        <aside class="explorer-panel">
+            <div class="project-identity"><button id="backToProjectsButton" class="icon-button back"><svg><use href="#i-chevron"></use></svg></button><img src="assets/void-engine.svg" alt=""><div><strong id="editorProjectName">Project</strong><span id="editorProjectPath"></span></div></div>
+            <div class="explorer-titlebar"><span data-i18n="explorer">Explorer</span><div class="tool-icons"><button id="searchExplorerButton" title="Search"><svg><use href="#i-search"></use></svg></button><button id="newItemButton" title="New"><svg><use href="#i-plus"></use></svg></button><button id="refreshExplorerButton" title="Refresh"><svg><use href="#i-refresh"></use></svg></button></div></div>
+            <section id="searchPanel" class="search-panel hidden"><div class="search-box"><svg><use href="#i-search"></use></svg><input id="searchInput" placeholder="Search project..."><button id="closeSearchButton"><svg><use href="#i-close"></use></svg></button></div><div class="search-modes"><button class="search-mode active" data-search-mode="files">Files</button><button class="search-mode" data-search-mode="text">Text</button></div><div id="searchStatus" class="search-status"></div><div id="searchResults" class="search-results"></div></section>
+            <div id="fileTree" class="file-tree"></div>
+            <div class="explorer-legend"><span><i class="legend-color generated"></i>Generated</span><span><i class="legend-color config"></i>Config</span></div>
+        </aside>
+
+        <div class="workbench">
+            <div class="project-actionbar">
+                <div class="project-actions">
+                    <div class="run-config-picker">
+                        <button id="runConfigurationButton" class="run-config-button"><svg><use href="#i-monitor"></use></svg><span id="runConfigurationName">VoidApp</span><svg class="run-config-chevron"><use href="#i-chevron-down"></use></svg></button>
+                        <div id="runConfigurationMenu" class="run-config-menu hidden"></div>
+                    </div>
+                    <button id="buildProjectButton" class="square-action build" title="Build"><svg><use id="buildActionIcon" href="#i-build"></use></svg></button>
+                    <button id="runProjectButton" class="square-action run" title="Run"><svg><use id="runActionIcon" href="#i-play"></use></svg></button>
+                    <button id="stopRunButton" class="square-action stop hidden" title="Stop"><svg><use href="#i-stop"></use></svg></button>
+                    <button id="debugProjectButton" class="square-action debug" title="Debug" disabled><svg><use href="#i-debug"></use></svg></button>
+                    <button id="runMoreButton" class="square-action more" title="More"><svg><use href="#i-more"></use></svg></button>
+                    <button id="actionSearchButton" class="square-action" title="Search"><svg><use href="#i-search"></use></svg></button>
+                </div>
+                <div class="project-badges"><span class="project-type-badge" data-i18n="textProjectBadge">TEXT PROJECT</span><span id="cmakeBadge" class="toolchain-badge">CMake: checking...</span></div>
+            </div>
+            <div id="documentTabs" class="document-tabs project-tabs"></div>
+            <main class="document-host">
+                <section id="projectWelcomeView" class="project-welcome"><img src="assets/void-engine.svg" alt=""><h2 id="projectWelcomeTitle">Void Project</h2><p>Select a file in Explorer or create a new one.</p><div><button class="secondary-button" id="welcomeNewFileButton">New File</button><button class="secondary-button" id="welcomeSearchButton">Search</button></div></section>
+                <section id="projectTextView" class="project-text-view hidden"><div class="code-region"><div id="projectLineNumbers" class="line-numbers">1</div><div class="code-stack"><pre id="projectSyntaxLayer" class="syntax-layer"></pre><textarea id="projectTextEditor" class="code-editor" spellcheck="false"></textarea></div></div><footer class="editor-status"><div><span>UTF-8</span><span>LF</span><span>Tab Size: 4</span></div><div><span id="projectLanguageStatus">Plain Text</span><span id="projectCursorStatus">Ln 1, Col 1</span><span id="projectSaveStatus">Saved</span></div></footer></section>
+                <section id="projectImageView" class="image-view hidden"><div class="image-stage"><img id="projectImagePreview" alt=""></div><aside class="image-info"><h3 id="projectImageName">Image</h3><div><span>Format</span><strong id="projectImageFormat"></strong></div><div><span>Resolution</span><strong id="projectImageResolution"></strong></div><div><span>Size</span><strong id="projectImageSize"></strong></div><div><span>Path</span><strong id="projectImagePath"></strong></div></aside></section>
+                <section id="projectBinaryView" class="binary-view hidden"><svg><use href="#i-file"></use></svg><h2 id="binaryFileName"></h2><p>This file is visible in the project but cannot be edited as text.</p><span id="binaryFileInfo"></span></section>
+            </main>
+            <section id="bottomPanel" class="bottom-panel"><div class="bottom-tabs"><div><button id="outputPanelButton" class="bottom-tab"><svg><use href="#i-output"></use></svg>Output</button><button id="terminalPanelButton" class="bottom-tab active"><svg><use href="#i-terminal"></use></svg>Terminal</button></div><button id="toggleBottomPanelButton" class="bottom-collapse">−</button></div><div id="outputPanel" class="output-panel hidden"><div id="outputContent" class="output-content"><div class="output-line info">Void Engine Output</div></div></div><div id="terminalPanel" class="terminal-panel"><div class="terminal-tabbar"><div id="terminalTabs" class="terminal-tabs"></div><div class="terminal-tools"><button id="restartTerminalButton" title="Restart current terminal"><svg><use href="#i-restart"></use></svg></button><button id="newTerminalButton" title="New PowerShell"><svg><use href="#i-plus"></use></svg></button></div></div><div id="terminalEmptyState" class="terminal-empty hidden"><svg><use href="#i-terminal"></use></svg><strong>No terminal</strong><span>Press + to open Windows PowerShell.</span></div><div id="terminalOutput" class="terminal-output"></div><div id="terminalInputRow" class="terminal-input-row"><span id="terminalPrompt">PS&gt;</span><input id="terminalInput" autocomplete="off" spellcheck="false"></div></div></section>
+        </div>
+    </section>
+
+    <div id="newProjectModal" class="modal hidden"><div class="create-project-window"><aside class="template-sidebar"><div class="modal-caption">Templates</div><button class="template-button active" data-template="basic"><strong>Basic</strong><span>Starter C++ project</span></button><button class="template-button" data-template="empty"><strong>Empty</strong><span>Only project_type.void</span></button></aside><main class="create-project-main"><div class="modal-header"><div><h2>New Project</h2><p>Create a new Void Engine project.</p></div><button id="newProjectCloseButton" class="icon-button"><svg><use href="#i-close"></use></svg></button></div><div class="form-section"><label>Project type</label><div class="project-type-grid"><button class="project-type-card disabled" data-type="3d" disabled><div class="type-icon">3D</div><strong>3D Project</strong><span>Not ready yet. Creation is disabled.</span><em>COMING LATER</em></button><button class="project-type-card active" data-type="text"><div class="type-icon">&lt;/&gt;</div><strong>Text Project</strong><span>C++ source code, files, terminal and build tools.</span></button></div></div><div class="form-section"><label>Project</label><div class="field"><span>Location</span><div class="field-row"><input id="projectLocation" value="C:\VoidProjects"><button id="browseProjectLocationButton" class="secondary-button">Browse</button></div></div><div class="field"><span>Name</span><input id="projectName" placeholder="Leave empty for automatic name"></div><div class="path-preview"><span>Project path</span><strong id="projectPathPreview"></strong></div></div><div id="newProjectError" class="error-message"></div><div class="modal-actions"><button id="newProjectCancelButton" class="secondary-button">Cancel</button><button id="createProjectButton" class="primary-button">Create Project</button></div></main></div></div>
+
+    <div id="newFileModal" class="modal hidden"><div class="modal-card wide"><div class="modal-header"><div><h2>New File</h2><p id="newFileDestination"></p></div><button id="newFileCloseButton" class="icon-button"><svg><use href="#i-close"></use></svg></button></div><div class="file-presets"><button class="file-preset active" data-preset="file">File</button><button class="file-preset" data-preset="cpp">C++ Source</button><button class="file-preset" data-preset="hpp">C++ Header</button><button class="file-preset" data-preset="lua">Lua</button><button class="file-preset" data-preset="json">JSON</button><button class="file-preset" data-preset="shader">Shader</button><button class="file-preset" data-preset="text">Text</button></div><div class="field"><span>Name</span><input id="newFileName" placeholder="Example.cpp"></div><div id="newFileError" class="error-message"></div><div class="modal-actions"><button id="newFileCancelButton" class="secondary-button">Cancel</button><button id="createFileButton" class="primary-button">Create</button></div></div></div>
+
+    <div id="newFolderModal" class="modal hidden"><div class="modal-card"><div class="modal-header"><div><h2>New Folder</h2><p id="newFolderDestination"></p></div><button id="newFolderCloseButton" class="icon-button"><svg><use href="#i-close"></use></svg></button></div><div class="field"><span>Folder name</span><input id="newFolderName" placeholder="NewFolder"></div><div id="newFolderError" class="error-message"></div><div class="modal-actions"><button id="newFolderCancelButton" class="secondary-button">Cancel</button><button id="createFolderButton" class="primary-button">Create</button></div></div></div>
+
+    <div id="settingsModal" class="modal hidden"><div class="settings-window"><aside><h3 data-i18n="settings">Settings</h3><button class="settings-nav active" data-settings-page="general" data-i18n="general">General</button><button class="settings-nav" data-settings-page="build" data-i18n="buildSettings">Build</button></aside><main><div class="modal-header"><div><h2 id="settingsPageTitle" data-i18n="general">General</h2><p id="settingsPageDescription" data-i18n="settingsDescription">Void Engine editor preferences.</p></div><button id="settingsCloseButton" class="icon-button"><svg><use href="#i-close"></use></svg></button></div>
+                <section id="settingsGeneralPage" class="settings-page">
+                    <div class="setting-row"><div><strong data-i18n="language">Language</strong><span data-i18n="languageDescription">Interface language.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="language"><svg><use href="#i-info"></use></svg></button><select id="languageSelect"><option value="en">English</option><option value="ru">Русский</option></select></div></div>
+                    <div class="setting-row"><div><strong data-i18n="editorFontSize">Editor font size</strong><span data-i18n="editorFontSizeDescription">Code editor text size.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="fontSize"><svg><use href="#i-info"></use></svg></button><input id="editorFontSizeInput" type="number" min="11" max="24" value="14"></div></div>
+                    <div class="setting-row"><div><strong data-i18n="autoSave">Auto save</strong><span data-i18n="autoSaveDescription">Save changed text files automatically.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="autoSave"><svg><use href="#i-info"></use></svg></button><label class="switch"><input id="autoSaveCheckbox" type="checkbox" checked><i></i></label></div></div>
+                    <div class="setting-row"><div><strong data-i18n="autoRefreshFiles">Auto refresh files</strong><span data-i18n="autoRefreshFilesDescription">Refresh Explorer when project files change on disk.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="autoRefresh"><svg><use href="#i-info"></use></svg></button><label class="switch"><input id="autoRefreshFilesCheckbox" type="checkbox" checked><i></i></label></div></div>
+                </section>
+                <section id="settingsBuildPage" class="settings-page hidden">
+                    <div class="setting-row"><div><strong data-i18n="builder">Builder</strong><span data-i18n="builderDescription">Void Build manages configure/build and cancellation itself.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="builder"><svg><use href="#i-info"></use></svg></button><select id="buildModeSelect"><option value="void">Void Build</option><option value="external">External command</option></select></div></div>
+                    <div class="setting-row"><div><strong data-i18n="externalBuildCommand">External build command</strong><span data-i18n="externalBuildCommandDescription">Used only when External command is selected.</span></div><div class="setting-control wide-control"><button class="setting-info" data-setting-info="externalBuild"><svg><use href="#i-info"></use></svg></button><input id="externalBuildCommandInput" placeholder="cmake --build build/cmake --config Debug"></div></div>
+                    <div class="setting-row"><div><strong data-i18n="autoRebuildBeforeRun">Build before run when changed</strong><span data-i18n="autoRebuildBeforeRunDescription">Build only when source/config files are newer than the executable.</span></div><div class="setting-control"><button class="setting-info" data-setting-info="autoRebuild"><svg><use href="#i-info"></use></svg></button><label class="switch"><input id="autoRebuildBeforeRunCheckbox" type="checkbox" checked><i></i></label></div></div>
+                    <div class="setting-row"><div><strong data-i18n="detectedCMake">Detected CMake</strong><span id="settingsCMakePath">Checking...</span></div><div class="setting-control"><button class="setting-info" data-setting-info="cmake"><svg><use href="#i-info"></use></svg></button><button id="refreshCMakeButton" class="secondary-button" data-i18n="refresh">Refresh</button></div></div>
+                </section>
+                <div class="modal-actions"><button id="settingsDoneButton" class="primary-button" data-i18n="done">Done</button></div></main></div></div>
+
+    <div id="runConfigModal" class="modal hidden"><div class="run-config-window">
+        <aside class="run-config-sidebar"><div class="run-config-sidebar-title" data-i18n="runSettings">Run/Debug Configurations</div><div id="runConfigList" class="run-config-list"></div><div class="run-config-list-tools"><button id="addRunConfigButton" class="icon-button"><svg><use href="#i-plus"></use></svg></button><button id="deleteRunConfigButton" class="icon-button"><svg><use href="#i-trash"></use></svg></button></div></aside>
+        <main class="run-config-editor"><div class="modal-header"><div><h2 data-i18n="runSettings">Run/Debug Configurations</h2><p data-i18n="runSettingsDescription">Choose what the toolbar launches.</p></div><button id="runConfigCloseButton" class="icon-button"><svg><use href="#i-close"></use></svg></button></div><div class="field"><span data-i18n="configurationName">Configuration name</span><input id="runConfigNameInput" placeholder="VoidApp"></div><div class="field"><span data-i18n="mode">Mode</span><select id="runConfigModeSelect"><option value="project">Project</option><option value="file">Current File</option><option value="custom">Custom Command</option></select></div><div class="field"><span data-i18n="command">Command</span><input id="runConfigCommandInput" placeholder="Example: python &quot;${file}&quot;"></div><div class="path-preview"><span data-i18n="commandHints">Command variables</span><strong>${projectRoot}  ${file}  ${fileDir}  ${fileName}</strong></div><div id="runConfigError" class="error-message"></div><div class="modal-actions"><button id="runConfigCancelButton" class="secondary-button" data-i18n="cancel">Cancel</button><button id="runConfigSaveButton" class="primary-button" data-i18n="saveConfig">Save Configuration</button></div></main>
+    </div></div>
+
+    <div id="helpModal" class="modal hidden"><div class="help-window"><aside><h3>Help</h3><button class="help-nav active" data-help-page="about">About</button><button class="help-nav" data-help-page="commands">Commands</button><button class="help-nav" data-help-page="languages">Languages</button><button class="help-nav" data-help-page="colors">Explorer Colors</button><button class="help-nav" data-help-page="structure">Project Structure</button></aside><main><button id="helpCloseButton" class="icon-button help-close"><svg><use href="#i-close"></use></svg></button><div id="helpBody"></div></main></div></div>
+
+
+    <div id="appDialogModal" class="modal hidden">
+        <div class="app-dialog-card">
+            <div class="app-dialog-icon" id="appDialogIcon"><img src="assets/void-engine.svg" alt=""></div>
+            <div class="app-dialog-main">
+                <div class="app-dialog-header"><div><h2 id="appDialogTitle">Void Engine</h2><p id="appDialogMessage"></p></div><button id="appDialogClose" class="icon-button"><svg><use href="#i-close"></use></svg></button></div>
+                <input id="appDialogInput" class="app-dialog-input hidden" autocomplete="off" spellcheck="false">
+                <div class="app-dialog-actions"><button id="appDialogCancel" class="secondary-button hidden">Cancel</button><button id="appDialogConfirm" class="primary-button">OK</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editorContextMenu" class="context-menu hidden"><button data-editor-command="undo"><span>Undo</span><span>Ctrl+Z</span></button><button data-editor-command="redo"><span>Redo</span><span>Ctrl+Y</span></button><div class="menu-separator"></div><button data-editor-command="cut"><span>Cut</span><span>Ctrl+X</span></button><button data-editor-command="copy"><span>Copy</span><span>Ctrl+C</span></button><button data-editor-command="paste"><span>Paste</span><span>Ctrl+V</span></button><div class="menu-separator"></div><button data-editor-command="selectAll"><span>Select All</span><span>Ctrl+A</span></button></div>
+
+    <div id="explorerContextMenu" class="context-menu hidden">
+        <button id="contextNew"><span data-i18n="new">New</span><span class="submenu-arrow">›</span></button>
+        <button id="contextRun"><span data-i18n="run">Run</span><span>Ctrl+Shift+F10</span></button>
+        <div class="menu-separator"></div>
+        <button id="contextCut"><span data-i18n="cut">Cut</span><span>Ctrl+X</span></button>
+        <button id="contextCopy"><span data-i18n="copy">Copy</span><span>Ctrl+C</span></button>
+        <button id="contextPaste"><span data-i18n="paste">Paste</span><span>Ctrl+V</span></button>
+        <div class="menu-separator"></div>
+        <button id="contextRename"><span data-i18n="rename">Rename</span><span>F2</span></button>
+        <button id="contextCopyPath"><span data-i18n="copyPath">Copy Path</span></button>
+        <button id="contextDelete" class="danger-text"><span data-i18n="delete">Delete</span><span>Del</span></button>
+        <div class="menu-separator"></div>
+        <button id="contextOpenIn"><span data-i18n="openIn">Open In</span><span class="submenu-arrow">›</span></button>
+        <button id="contextRefresh"><span data-i18n="refresh">Refresh</span></button>
+    </div>
+    <div id="newSubmenu" class="context-menu submenu hidden">
+        <button data-new-preset="cpp"><span>C/C++ Source File</span></button>
+        <button data-new-preset="hpp"><span>C/C++ Header File</span></button>
+        <button data-new-preset="file"><span data-i18n="fileGeneric">File</span></button>
+        <button data-new-preset="folder"><span data-i18n="directory">Directory</span></button>
+        <button data-new-preset="js"><span>JavaScript File</span></button>
+        <button data-new-preset="html"><span>HTML File</span></button>
+        <button data-new-preset="css"><span>Stylesheet</span></button>
+        <button data-new-preset="json"><span>JSON</span></button>
+        <button data-new-preset="lua"><span>Lua</span></button>
+        <button data-new-preset="shader"><span>Shader</span></button>
+    </div>
+    <div id="openInSubmenu" class="context-menu submenu hidden">
+        <button id="openInExplorer"><span data-i18n="explorer">Explorer</span></button>
+        <button id="openInVoidEditor"><span data-i18n="voidEditor">Void Editor</span></button>
+        <button id="openInAssociated"><span data-i18n="associatedApplication">Associated Application</span></button>
+        <button id="openInTerminal"><span data-i18n="terminal">Terminal</span></button>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
