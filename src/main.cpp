@@ -2622,7 +2622,28 @@ int main() {
         });
 #endif
 
-        const fs::path uiPath = fs::path(PROJECT_SOURCE_DIR) / "ui" / "index.html";
+        fs::path uiPath;
+#ifdef _WIN32
+        const fs::path executablePath = fs::path(currentExecutablePath());
+        const fs::path packagedUiPath = executablePath.parent_path() / "ui" / "index.html";
+        if (fs::exists(packagedUiPath)) {
+            uiPath = packagedUiPath;
+        } else {
+            uiPath = fs::path(PROJECT_SOURCE_DIR) / "ui" / "index.html";
+        }
+#else
+        uiPath = fs::path(PROJECT_SOURCE_DIR) / "ui" / "index.html";
+#endif
+
+        if (!fs::exists(uiPath)) {
+#ifdef _WIN32
+            MessageBoxW(nullptr,
+                L"Void Engine UI was not found. Make sure the ui folder is next to VoidEngine.exe.",
+                L"Void Engine Error",
+                MB_OK | MB_ICONERROR);
+#endif
+            throw std::runtime_error("Void Engine UI was not found.");
+        }
 
         window.navigate("file:///" + uiPath.generic_string());
         window.run();
