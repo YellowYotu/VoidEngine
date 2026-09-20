@@ -27,6 +27,33 @@ jobs:
           $version = (Get-Content VERSION -Raw).Trim()
           "version=$version" >> $env:GITHUB_OUTPUT
 
+      - name: Download portable C++ toolchain
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path downloads, package/toolchain | Out-Null
+
+          $cmakeUrl = "https://github.com/Kitware/CMake/releases/download/v4.4.3/cmake-4.4.3-windows-x86_64.zip"
+          $llvmUrl = "https://github.com/mstorsjo/llvm-mingw/releases/download/20260908/llvm-mingw-20260908-ucrt-x86_64.zip"
+          $ninjaUrl = "https://github.com/ninja-build/ninja/releases/download/v1.13.2/ninja-win.zip"
+
+          Invoke-WebRequest -Uri $cmakeUrl -OutFile downloads/cmake.zip
+          Invoke-WebRequest -Uri $llvmUrl -OutFile downloads/llvm.zip
+          Invoke-WebRequest -Uri $ninjaUrl -OutFile downloads/ninja.zip
+
+          Expand-Archive downloads/cmake.zip -DestinationPath downloads/cmake -Force
+          Expand-Archive downloads/llvm.zip -DestinationPath downloads/llvm -Force
+          Expand-Archive downloads/ninja.zip -DestinationPath package/toolchain/ninja -Force
+
+          $cmakeDir = Get-ChildItem downloads/cmake -Directory | Select-Object -First 1
+          $llvmDir = Get-ChildItem downloads/llvm -Directory | Select-Object -First 1
+          Move-Item $cmakeDir.FullName package/toolchain/cmake
+          Move-Item $llvmDir.FullName package/toolchain/llvm
+
+          & package/toolchain/cmake/bin/cmake.exe --version
+          & package/toolchain/ninja/ninja.exe --version
+          & package/toolchain/llvm/bin/x86_64-w64-mingw32-clang++.exe --version
+
       - name: Package
         shell: pwsh
         run: |
