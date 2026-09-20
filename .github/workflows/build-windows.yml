@@ -1,0 +1,44 @@
+name: Build Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - setup/project-bootstrap
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Read version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content VERSION -Raw).Trim()
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          New-Item -ItemType Directory -Force -Path package/ui | Out-Null
+          Copy-Item build/Release/VoidEngine.exe package/VoidEngine.exe
+          Copy-Item ui/* package/ui/ -Recurse -Force
+          Compress-Archive -Path package/* -DestinationPath "VoidEngine-$version.zip" -Force
+
+      - name: Upload engine package
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoidEngine-${{ steps.version.outputs.version }}
+          path: VoidEngine-${{ steps.version.outputs.version }}.zip
