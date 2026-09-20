@@ -1859,6 +1859,12 @@ fs::path findBuiltExecutable(const fs::path& projectRoot) {
     }
     error.clear();
 
+    // CMake targets can rename the executable with OUTPUT_NAME.
+    // If there is only one executable in build/bin, that is the runnable target.
+    if (executables.size() == 1) {
+        return executables.front();
+    }
+
     std::sort(executables.begin(), executables.end(), [](const fs::path& first, const fs::path& second) {
         std::error_code firstError;
         std::error_code secondError;
