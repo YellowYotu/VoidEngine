@@ -161,6 +161,7 @@ const autoSaveCheckbox = $("autoSaveCheckbox");
 const autoRefreshFilesCheckbox = $("autoRefreshFilesCheckbox");
 const autoRebuildBeforeRunCheckbox = $("autoRebuildBeforeRunCheckbox");
 const buildModeSelect = $("buildModeSelect");
+const buildConfigurationSelect = $("buildConfigurationSelect");
 const externalBuildCommandInput = $("externalBuildCommandInput");
 const settingsCMakePath = $("settingsCMakePath");
 const refreshCMakeButton = $("refreshCMakeButton");
@@ -256,6 +257,7 @@ let settings = {
     autoRefreshFiles: true,
     autoRebuildBeforeRun: true,
     buildMode: "void",
+    buildConfiguration: "Debug",
     externalBuildCommand: ""
 };
 
@@ -272,7 +274,7 @@ const translations = {
         file:"File", edit:"Edit", help:"Help", newProject:"New Project", openProject:"Open Project", openFile:"Open File", save:"Save", settings:"Settings", exit:"Exit", projects:"Projects", allProjects:"All Projects", recent:"Recent", editor:"Editor", explorer:"Explorer",
         build:"Build", run:"Run", restart:"Restart", stop:"Stop", search:"Search", textProjectBadge:"TEXT PROJECT", output:"Output", terminal:"Terminal", general:"General", buildSettings:"Build",
         settingsDescription:"Void Engine editor preferences.", buildSettingsDescription:"Build system, toolchain and run preparation.", language:"Language", languageDescription:"Interface language.", editorFontSize:"Editor font size", editorFontSizeDescription:"Code editor text size.", autoSave:"Auto save", autoSaveDescription:"Save changed text files automatically.", autoRefreshFiles:"Auto refresh files", autoRefreshFilesDescription:"Refresh Explorer when project files change on disk.",
-        autoRebuildBeforeRun:"Build before run when changed", autoRebuildBeforeRunDescription:"Build only when source/config files are newer than the executable.", builder:"Builder", builderDescription:"Void Build manages configure/build and cancellation itself.", externalBuildCommand:"External build command", externalBuildCommandDescription:"Used only when External command is selected.", detectedCMake:"Detected CMake", refresh:"Refresh", done:"Done",
+        autoRebuildBeforeRun:"Build before run when changed", autoRebuildBeforeRunDescription:"Build only when source/config files are newer than the executable.", builder:"Builder", builderDescription:"Void Build manages configure/build and cancellation itself.", externalBuildCommand:"External build command", externalBuildCommandDescription:"Used only when External command is selected.", buildConfiguration:"Build configuration", buildConfigurationDescription:"Choose Debug, Release or another CMake configuration.", detectedCMake:"Detected CMake", refresh:"Refresh", done:"Done",
         runSettings:"Run/Debug Configurations", runSettingsDescription:"Choose what the toolbar launches.", configurationName:"Configuration name", mode:"Mode", command:"Command", commandHints:"Command variables", saveConfig:"Save Configuration", cancel:"Cancel",
         searchProjectPlaceholder:"Search project...", selectFileOrCreate:"Select a file in Explorer or create a new one.", newFile:"New File", newFolder:"New Folder", new:"New", fileGeneric:"File", directory:"Directory", cut:"Cut", copy:"Copy", paste:"Paste", rename:"Rename", copyPath:"Copy Path", delete:"Delete", openIn:"Open In", voidEditor:"Void Editor", associatedApplication:"Associated Application", cppSource:"C/C++ Source File", cppHeader:"C/C++ Header File", javascriptFile:"JavaScript File", htmlFile:"HTML File", stylesheet:"Stylesheet", shader:"Shader", externalCommandOption:"External command",
         searchFiles:"Files", searchText:"Text", noTerminal:"No terminal", pressPlusPowerShell:"Press + to open Windows PowerShell.", actionBuildInfo:"Build project. While building this button becomes Cancel.", actionRunInfo:"Run selected configuration.", actionRestartInfo:"Close the running app and launch it again.", actionStopInfo:"Close the running app and its child processes.",
@@ -283,7 +285,7 @@ const translations = {
         file:"Файл", edit:"Правка", help:"Помощь", newProject:"Новый проект", openProject:"Открыть проект", openFile:"Открыть файл", save:"Сохранить", settings:"Настройки", exit:"Выход", projects:"Проекты", allProjects:"Все проекты", recent:"Недавние", editor:"Редактор", explorer:"Проводник",
         build:"Сборка", run:"Запуск", restart:"Перезапуск", stop:"Стоп", search:"Поиск", textProjectBadge:"ТЕКСТОВЫЙ ПРОЕКТ", output:"Вывод", terminal:"Терминал", general:"Общие", buildSettings:"Сборка",
         settingsDescription:"Параметры редактора Void Engine.", buildSettingsDescription:"Система сборки, инструменты и подготовка к запуску.", language:"Язык", languageDescription:"Язык всего интерфейса.", editorFontSize:"Размер шрифта редактора", editorFontSizeDescription:"Размер текста в редакторе кода.", autoSave:"Автосохранение", autoSaveDescription:"Автоматически сохранять изменённые текстовые файлы.", autoRefreshFiles:"Автообновление файлов", autoRefreshFilesDescription:"Обновлять Проводник, когда файлы проекта меняются на диске.",
-        autoRebuildBeforeRun:"Собирать перед запуском при изменениях", autoRebuildBeforeRunDescription:"Собирать только если исходники/конфиги новее готового exe.", builder:"Система сборки", builderDescription:"Void Build сам управляет конфигурацией, сборкой и отменой.", externalBuildCommand:"Сторонняя команда сборки", externalBuildCommandDescription:"Используется только при выборе сторонней команды.", detectedCMake:"Обнаруженный CMake", refresh:"Обновить", done:"Готово",
+        autoRebuildBeforeRun:"Собирать перед запуском при изменениях", autoRebuildBeforeRunDescription:"Собирать только если исходники/конфиги новее готового exe.", builder:"Система сборки", builderDescription:"Void Build сам управляет конфигурацией, сборкой и отменой.", externalBuildCommand:"Сторонняя команда сборки", externalBuildCommandDescription:"Используется только при выборе сторонней команды.", buildConfiguration:"Конфигурация сборки", buildConfigurationDescription:"Выберите Debug, Release или другую конфигурацию CMake.", detectedCMake:"Обнаруженный CMake", refresh:"Обновить", done:"Готово",
         runSettings:"Конфигурации запуска", runSettingsDescription:"Выберите, что запускается с верхней панели.", configurationName:"Имя конфигурации", mode:"Режим", command:"Команда", commandHints:"Переменные команды", saveConfig:"Сохранить конфигурацию", cancel:"Отмена",
         searchProjectPlaceholder:"Поиск по проекту...", selectFileOrCreate:"Выберите файл в Проводнике или создайте новый.", newFile:"Новый файл", newFolder:"Новая папка", new:"Создать", fileGeneric:"Файл", directory:"Папка", cut:"Вырезать", copy:"Копировать", paste:"Вставить", rename:"Переименовать", copyPath:"Копировать путь", delete:"Удалить", openIn:"Открыть в", voidEditor:"Void Editor", associatedApplication:"Связанное приложение", cppSource:"Исходный файл C/C++", cppHeader:"Заголовочный файл C/C++", javascriptFile:"Файл JavaScript", htmlFile:"Файл HTML", stylesheet:"Таблица стилей", shader:"Шейдер", externalCommandOption:"Сторонняя команда",
         searchFiles:"Файлы", searchText:"Текст", noTerminal:"Нет терминала", pressPlusPowerShell:"Нажмите +, чтобы открыть Windows PowerShell.", actionBuildInfo:"Собрать проект. Во время сборки эта кнопка становится Отмена.", actionRunInfo:"Запустить выбранную конфигурацию.", actionRestartInfo:"Закрыть запущенную программу и запустить её заново.", actionStopInfo:"Закрыть запущенную программу и все её дочерние процессы.",
@@ -481,12 +483,56 @@ async function readClipboardText() {
     return parseNativeResult(await getClipboardTextNative());
 }
 
+const editorHistories = new WeakMap();
+
+function ensureEditorHistory(editor) {
+    let history = editorHistories.get(editor);
+    if (!history || history.entries[history.index]?.value !== editor.value) {
+        history = {
+            entries: [{ value: editor.value, start: editor.selectionStart, end: editor.selectionEnd }],
+            index: 0,
+            restoring: false
+        };
+        editorHistories.set(editor, history);
+    }
+    return history;
+}
+
+function recordEditorHistory(editor) {
+    const history = editorHistories.get(editor) || ensureEditorHistory(editor);
+    if (history.restoring) return;
+    const current = history.entries[history.index];
+    if (current?.value === editor.value) {
+        current.start = editor.selectionStart;
+        current.end = editor.selectionEnd;
+        return;
+    }
+    history.entries.splice(history.index + 1);
+    history.entries.push({ value: editor.value, start: editor.selectionStart, end: editor.selectionEnd });
+    if (history.entries.length > 500) history.entries.shift();
+    history.index = history.entries.length - 1;
+}
+
+function restoreEditorHistory(editor, direction) {
+    const history = ensureEditorHistory(editor);
+    const next = history.index + direction;
+    if (next < 0 || next >= history.entries.length) return false;
+    history.index = next;
+    const state = history.entries[next];
+    history.restoring = true;
+    editor.value = state.value;
+    editor.setSelectionRange(Math.min(state.start, editor.value.length), Math.min(state.end, editor.value.length));
+    editor.dispatchEvent(new Event("input", { bubbles: true }));
+    history.restoring = false;
+    return true;
+}
+
 function configureEditor(editor, syntaxLayer, gutter, cursorStatus, getExtension, changed) {
-    editor.addEventListener("input", () => { updateEditorVisual(editor, syntaxLayer, gutter, cursorStatus, getExtension()); changed(); });
+    editor.addEventListener("input", () => { recordEditorHistory(editor); updateEditorVisual(editor, syntaxLayer, gutter, cursorStatus, getExtension()); changed(); });
     editor.addEventListener("scroll", () => { gutter.scrollTop = editor.scrollTop; syntaxLayer.style.transform = `translate(${-editor.scrollLeft}px, ${-editor.scrollTop}px)`; });
     editor.addEventListener("click", () => updateEditorVisual(editor, syntaxLayer, gutter, cursorStatus, getExtension()));
     editor.addEventListener("keyup", () => updateEditorVisual(editor, syntaxLayer, gutter, cursorStatus, getExtension()));
-    editor.addEventListener("focus", () => activeEditor = editor);
+    editor.addEventListener("focus", () => { activeEditor = editor; ensureEditorHistory(editor); });
     editor.addEventListener("paste", event => {
         const text = event.clipboardData?.getData("text/plain");
         if (typeof text !== "string") return;
@@ -494,6 +540,17 @@ function configureEditor(editor, syntaxLayer, gutter, cursorStatus, getExtension
         insertEditorText(editor, text);
     });
     editor.addEventListener("keydown", event => {
+        const key = event.key.toLowerCase();
+        if (event.ctrlKey && key === "z") {
+            event.preventDefault();
+            restoreEditorHistory(editor, event.shiftKey ? 1 : -1);
+            return;
+        }
+        if (event.ctrlKey && key === "y") {
+            event.preventDefault();
+            restoreEditorHistory(editor, 1);
+            return;
+        }
         if (event.key !== "Tab") return;
         event.preventDefault();
         editor.setRangeText("\t", editor.selectionStart, editor.selectionEnd, "end");
@@ -540,8 +597,8 @@ function showOnly(view) {
 async function executeEditorCommand(command) {
     if (!activeEditor) return;
     activeEditor.focus();
-    if (command === "undo") { document.execCommand("undo"); return; }
-    if (command === "redo") { document.execCommand("redo"); return; }
+    if (command === "undo") { restoreEditorHistory(activeEditor, -1); return; }
+    if (command === "redo") { restoreEditorHistory(activeEditor, 1); return; }
     if (command === "selectAll") { activeEditor.select(); return; }
     const start = activeEditor.selectionStart, end = activeEditor.selectionEnd;
     const selected = activeEditor.value.substring(start, end);
@@ -755,6 +812,7 @@ function applySettings() {
     autoRefreshFilesCheckbox.checked = settings.autoRefreshFiles !== false;
     autoRebuildBeforeRunCheckbox.checked = settings.autoRebuildBeforeRun !== false;
     buildModeSelect.value = settings.buildMode || "void";
+    buildConfigurationSelect.value = settings.buildConfiguration || "Debug";
     externalBuildCommandInput.value = settings.externalBuildCommand || "";
     applyLanguage();
     restartFileWatcher();
@@ -1038,7 +1096,8 @@ async function startNativeBuild(pendingRun = false) {
     const result = parseNativeResult(await buildProjectNative(
         currentProject.path,
         settings.buildMode || "void",
-        settings.externalBuildCommand || ""
+        settings.externalBuildCommand || "",
+        settings.buildConfiguration || "Debug"
     ));
 
     if (result !== "success") {
@@ -1224,6 +1283,7 @@ function showSettingInfo(key) {
         autoSave: { en:"Automatically saves text documents shortly after changes.", ru:"Автоматически сохраняет текстовые документы вскоре после изменений." },
         autoRefresh: { en:"Void checks a lightweight project stamp and refreshes Explorer only when files really changed on disk.", ru:"Void проверяет лёгкий отпечаток проекта и обновляет Проводник только когда файлы реально изменились на диске." },
         autoRebuild: { en:"Before running VoidApp, Void compares source/config timestamps with build/bin/VoidApp.exe and builds only when required.", ru:"Перед запуском VoidApp сравнивает время изменения исходников/конфигов с build/bin/VoidApp.exe и собирает только при необходимости." },
+        buildConfiguration: { en:"Controls the CMake build configuration used by Void Build. Use Debug while developing and Release for distributable builds.", ru:"Выбирает конфигурацию CMake для Void Build. Используйте Debug при разработке и Release для распространяемых сборок." },
         builder: { en:"Void Build is the native build controller. It invokes CMake directly, owns the process tree, detects completion and supports real cancellation.", ru:"Void Build — собственный контроллер сборки. Он напрямую запускает CMake, контролирует дерево процессов, точно знает завершение и умеет реально отменять сборку." },
         externalBuild: { en:"Runs your custom command instead of Void Build. Cancellation still kills the whole process tree.", ru:"Запускает вашу команду вместо Void Build. Отмена всё равно завершает всё дерево процессов." },
         cmake: { en:"CMake used by Void Build. Void searches PATH, regular installations and CLion bundles.", ru:"CMake, который использует Void Build. Void ищет его в PATH, обычных установках и комплекте CLion." }
@@ -2196,6 +2256,7 @@ settingsDoneButton.addEventListener("click", async () => {
     settings.autoRefreshFiles = autoRefreshFilesCheckbox.checked;
     settings.autoRebuildBeforeRun = autoRebuildBeforeRunCheckbox.checked;
     settings.buildMode = buildModeSelect.value;
+    settings.buildConfiguration = buildConfigurationSelect.value;
     settings.externalBuildCommand = externalBuildCommandInput.value.trim();
     applySettings();
     await saveState();
