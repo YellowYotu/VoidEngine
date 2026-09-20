@@ -1462,9 +1462,9 @@ public:
             "[Console]::InputEncoding=[System.Text.UTF8Encoding]::new($false);"
             "$global:VoidProjectRoot='" + escapedPath + "';"
             "$global:VoidCMake='" + escapedCMake + "';"
-            "function global:void { param([string]$Action) $a=($Action+'').ToLower(); switch($a) {"
-            "'build' { Write-Output 'Void Build'; if(!(Test-Path -LiteralPath '.\\CMakeLists.txt')){Write-Error 'CMakeLists.txt was not found.'; break}; if([string]::IsNullOrWhiteSpace($global:VoidCMake) -or !(Test-Path -LiteralPath $global:VoidCMake)){Write-Error 'CMake was not found. Configure it in Settings or install CMake/CLion.'; break}; New-Item -ItemType Directory -Force -Path '.\\build\\cmake','.\\build\\bin','.\\build\\logs' | Out-Null; Write-Output ('CMake: '+$global:VoidCMake); Write-Output 'Configuring...'; & $global:VoidCMake -S . -B .\\build\\cmake; if($LASTEXITCODE -eq 0){Write-Output 'Building...'; & $global:VoidCMake --build .\\build\\cmake --config Debug}; if($LASTEXITCODE -eq 0){Write-Output 'Build successful.'; $exe=Get-ChildItem -LiteralPath '.\\build\\bin' -Filter '*.exe' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if($exe){Write-Output ('Executable: '+$exe.FullName)}else{Write-Warning 'Build completed, but no executable was found in build/bin.'}}; Write-Output '__VOID_REFRESH__' }"
-            "'rebuild' { Remove-Item -LiteralPath '.\\build\\cmake' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath '.\\build\\bin' -Recurse -Force -ErrorAction SilentlyContinue; void build }"
+            "function global:void { param([string]$Action,[string]$Configuration='debug') $a=($Action+'').ToLower(); $c=($Configuration+'').ToLower(); $config=switch($c){'release'{'Release'} 'relwithdebinfo'{'RelWithDebInfo'} 'minsizerel'{'MinSizeRel'} default{'Debug'}}; switch($a) {"
+            "'build' { Write-Output 'Void Build'; if(!(Test-Path -LiteralPath '.\\CMakeLists.txt')){Write-Error 'CMakeLists.txt was not found.'; break}; if([string]::IsNullOrWhiteSpace($global:VoidCMake) -or !(Test-Path -LiteralPath $global:VoidCMake)){Write-Error 'CMake was not found. Configure it in Settings or install CMake/CLion.'; break}; New-Item -ItemType Directory -Force -Path '.\\build\\cmake','.\\build\\bin','.\\build\\logs' | Out-Null; Write-Output ('CMake: '+$global:VoidCMake); Write-Output 'Configuring...'; & $global:VoidCMake -S . -B .\\build\\cmake; if($LASTEXITCODE -eq 0){Write-Output 'Building...'; & $global:VoidCMake --build .\\build\\cmake --config $config}; if($LASTEXITCODE -eq 0){Write-Output 'Build successful.'; $exe=Get-ChildItem -LiteralPath '.\\build\\bin' -Filter '*.exe' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if($exe){Write-Output ('Executable: '+$exe.FullName)}else{Write-Warning 'Build completed, but no executable was found in build/bin.'}}; Write-Output '__VOID_REFRESH__' }"
+            "'rebuild' { Remove-Item -LiteralPath '.\\build\\cmake' -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath '.\\build\\bin' -Recurse -Force -ErrorAction SilentlyContinue; void build $config }"
             "'clean' { Remove-Item -LiteralPath '.\\build' -Recurse -Force -ErrorAction SilentlyContinue; Write-Output 'Build directory removed.'; Write-Output '__VOID_REFRESH__' }"
             "'run' { $exe=Get-ChildItem -LiteralPath '.\\build\\bin' -Filter '*.exe' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if(!$exe){Write-Output 'Executable not found. Building first...'; void build; $exe=Get-ChildItem -LiteralPath '.\\build\\bin' -Filter '*.exe' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1}; if($exe){Write-Output ('Running '+$exe.Name+'...'); & $exe.FullName}else{Write-Error 'No executable was found in build/bin.'} }"
             "'root' { Set-Location -LiteralPath $global:VoidProjectRoot }"
@@ -1473,8 +1473,10 @@ public:
             "'version' { Write-Output 'Void Engine 0.0.1' }"
             "'doctor' { Write-Output 'Void Doctor'; Write-Output ('Project: '+$global:VoidProjectRoot); if(Test-Path '.\\CMakeLists.txt'){Write-Output '[OK] CMakeLists.txt'}else{Write-Output '[MISSING] CMakeLists.txt'}; if(Test-Path '.\\src\\main.cpp'){Write-Output '[OK] src/main.cpp'}else{Write-Output '[MISSING] src/main.cpp'}; if([string]::IsNullOrWhiteSpace($global:VoidCMake)){Write-Output '[MISSING] CMake'}else{Write-Output ('[OK] CMake '+$global:VoidCMake)} }"
             "'tree' { Get-ChildItem -Force | Format-Table Mode,LastWriteTime,Length,Name -AutoSize }"
-            "'help' { Write-Output 'Void commands:'; Write-Output '  void build    Build the project'; Write-Output '  void run      Run the built executable from build/bin'; Write-Output '  void rebuild  Clean and build again'; Write-Output '  void clean    Remove generated build files'; Write-Output '  void root     Go to project root'; Write-Output '  void where    Print current directory'; Write-Output '  void cmake    Print detected CMake path'; Write-Output '  void doctor   Check project/toolchain'; Write-Output '  void tree     List project root'; Write-Output '  void version  Print engine version'; Write-Output '  void help     Show this help' }"
+            "'help' { Write-Output 'Void commands:'; Write-Output '  void build [debug|release|relwithdebinfo|minsizerel]'; Write-Output '  void run      Run the built executable from build/bin'; Write-Output '  void rebuild [debug|release|relwithdebinfo|minsizerel]'; Write-Output '  void clean    Remove generated build files'; Write-Output '  void root     Go to project root'; Write-Output '  void where    Print current directory'; Write-Output '  void cmake    Print detected CMake path'; Write-Output '  void doctor   Check project/toolchain'; Write-Output '  void tree     List project root'; Write-Output '  void version  Print engine version'; Write-Output '  void help     Show this help' }"
             "default { Write-Output 'Unknown Void command. Use: void help' } } };"
+            "function global:cmake { if([string]::IsNullOrWhiteSpace($global:VoidCMake) -or !(Test-Path -LiteralPath $global:VoidCMake)){Write-Error 'CMake was not found.'; return}; & $global:VoidCMake @args };"
+            "function global:vbuild { param([string]$Configuration='debug') void build $Configuration }; function global:vrebuild { param([string]$Configuration='debug') void rebuild $Configuration }; function global:vrun { void run }; function global:vclean { void clean }; function global:vdoctor { void doctor }; function global:vhelp { void help }; function global:vroot { void root };"
             "Set-Location -LiteralPath '" + escapedPath + "';";
 
         std::wstring commandLine = L"powershell.exe -NoLogo -NoProfile -NoExit -ExecutionPolicy Bypass -Command \"" + utf8ToWide(script) + L"\"";
@@ -1919,7 +1921,7 @@ public:
         joinWorker();
     }
 
-    bool build(const fs::path& projectRoot, const std::string& buildMode, const std::string& externalCommand) {
+    bool build(const fs::path& projectRoot, const std::string& buildMode, const std::string& externalCommand, const std::string& requestedConfiguration = "Debug") {
         std::lock_guard lock(stateMutex_);
         if (running_) {
             return false;
@@ -1930,7 +1932,7 @@ public:
         cancelled_ = false;
         phase_ = "build";
 
-        worker_ = std::thread([this, projectRoot, buildMode, externalCommand]() {
+        worker_ = std::thread([this, projectRoot, buildMode, externalCommand, requestedConfiguration]() {
             emitState("build", true, false, false);
             bool success = false;
 
@@ -1962,7 +1964,9 @@ public:
 
                     if (success && !cancelled_) {
                         emitOutput("info", "Building...");
-                        std::wstring buildCommand = L"\"" + utf8ToWide(cmakePath) + L"\" --build .\\build\\cmake --config Debug";
+                        const std::string configuration = requestedConfiguration == "Release" || requestedConfiguration == "RelWithDebInfo" || requestedConfiguration == "MinSizeRel" ? requestedConfiguration : "Debug";
+                        emitOutput("info", "Configuration: " + configuration);
+                        std::wstring buildCommand = L"\"" + utf8ToWide(cmakePath) + L"\" --build .\\build\\cmake --config " + utf8ToWide(configuration);
                         success = runProcess(buildCommand, projectRoot, true);
                     }
 
@@ -2559,7 +2563,8 @@ int main() {
             const std::string root = webview::json_parse(request, "", 0);
             const std::string mode = webview::json_parse(request, "", 1);
             const std::string externalCommand = webview::json_parse(request, "", 2);
-            return executionManager.build(utf8Path(root), mode.empty() ? "void" : mode, externalCommand) ? "\"success\"" : "\"busy\"";
+            const std::string configuration = webview::json_parse(request, "", 3);
+            return executionManager.build(utf8Path(root), mode.empty() ? "void" : mode, externalCommand, configuration.empty() ? "Debug" : configuration) ? "\"success\"" : "\"busy\"";
         });
 
         window.bind("runProjectNative", [&executionManager](const std::string& request) -> std::string {
