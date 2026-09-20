@@ -1770,7 +1770,7 @@ std::string projectStamp(const fs::path& projectRoot) {
         error.clear();
         const auto writeTime = iterator->last_write_time(error);
         if (!error) {
-            newest = std::max(newest, static_cast<std::uint64_t>(writeTime.time_since_epoch().count()));
+            newest = (std::max)(newest, static_cast<std::uint64_t>(writeTime.time_since_epoch().count()));
         }
         error.clear();
     }
