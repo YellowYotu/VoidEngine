@@ -1778,11 +1778,57 @@ std::string projectStamp(const fs::path& projectRoot) {
     return std::to_string(count) + ":" + std::to_string(totalSize) + ":" + std::to_string(newest);
 }
 
-bool projectNeedsBuild(const fs::path& projectRoot) {
-    const fs::path executable = projectRoot / "build" / "bin" / "VoidApp.exe";
+fs::path findBuiltExecutable(const fs::path& projectRoot) {
+    const fs::path binDirectory = projectRoot / "build" / "bin";
     std::error_code error;
 
-    if (!fs::exists(executable, error)) {
+    if (!fs::is_directory(binDirectory, error)) {
+        return {};
+    }
+
+    std::vector<fs::path> executables;
+    for (const auto& entry : fs::directory_iterator(binDirectory, fs::directory_options::skip_permission_denied, error)) {
+        if (error) {
+            break;
+        }
+        if (entry.is_regular_file(error) && toLower(pathToUtf8(entry.path().extension())) == ".exe") {
+            executables.push_back(entry.path());
+        }
+        error.clear();
+    }
+
+    if (executables.empty()) {
+        return {};
+    }
+
+    const fs::path defaultExecutable = binDirectory / "VoidApp.exe";
+    if (fs::exists(defaultExecutable, error)) {
+        return defaultExecutable;
+    }
+    error.clear();
+
+    std::sort(executables.begin(), executables.end(), [](const fs::path& first, const fs::path& second) {
+        std::error_code firstError;
+        std::error_code secondError;
+        const auto firstTime = fs::last_write_time(first, firstError);
+        const auto secondTime = fs::last_write_time(second, secondError);
+        if (firstError != secondError) {
+            return !firstError;
+        }
+        if (!firstError && firstTime != secondTime) {
+            return firstTime > secondTime;
+        }
+        return toLower(pathToUtf8(first.filename())) < toLower(pathToUtf8(second.filename()));
+    });
+
+    return executables.front();
+}
+
+bool projectNeedsBuild(const fs::path& projectRoot) {
+    const fs::path executable = findBuiltExecutable(projectRoot);
+    std::error_code error;
+
+    if (executable.empty() || !fs::exists(executable, error)) {
         return true;
     }
 
@@ -1922,7 +1968,12 @@ public:
 
                     if (success && !cancelled_) {
                         emitOutput("success", "Build successful.");
-                        emitOutput("info", "Executable: " + pathToUtf8(projectRoot / "build" / "bin" / "VoidApp.exe"));
+                        const fs::path executable = findBuiltExecutable(projectRoot);
+                        if (!executable.empty()) {
+                            emitOutput("info", "Executable: " + pathToUtf8(executable));
+                        } else {
+                            emitOutput("warning", "Build completed, but no executable was found in build/bin.");
+                        }
                     }
                 }
             }
@@ -1950,9 +2001,9 @@ public:
             std::wstring runCommand;
 
             if (command.empty()) {
-                const fs::path executable = projectRoot / "build" / "bin" / "VoidApp.exe";
-                if (!fs::exists(executable)) {
-                    emitOutput("error", "Executable was not found: " + pathToUtf8(executable));
+                const fs::path executable = findBuiltExecutable(projectRoot);
+                if (executable.empty() || !fs::exists(executable)) {
+                    emitOutput("error", "No executable was found in: " + pathToUtf8(projectRoot / "build" / "bin"));
                     finish("run", false, false);
                     return;
                 }
